@@ -1,0 +1,116 @@
+
+> skills-sh-mcp@0.1.0 test
+> node --test
+
+TAP version 13
+# Subtest: cache stores and retrieves skill packages
+ok 1 - cache stores and retrieves skill packages
+  ---
+  duration_ms: 93.203232
+  type: 'test'
+  ...
+# Subtest: cache rejects unsafe file paths from downloads
+ok 2 - cache rejects unsafe file paths from downloads
+  ---
+  duration_ms: 3.797784
+  type: 'test'
+  ...
+# Subtest: search cache respects ttl
+ok 3 - search cache respects ttl
+  ---
+  duration_ms: 89.868291
+  type: 'test'
+  ...
+# Subtest: strong lexical match beats a much more installed but generic skill
+ok 4 - strong lexical match beats a much more installed but generic skill
+  ---
+  duration_ms: 2.348292
+  type: 'test'
+  ...
+# Subtest: exact slug match becomes auto-selectable
+ok 5 - exact slug match becomes auto-selectable
+  ---
+  duration_ms: 0.375933
+  type: 'test'
+  ...
+# Subtest: ambiguous short queries are not auto-selected
+ok 6 - ambiguous short queries are not auto-selected
+  ---
+  duration_ms: 0.548779
+  type: 'test'
+  ...
+# Subtest: parseSkillRef supports canonical full id
+ok 7 - parseSkillRef supports canonical full id
+  ---
+  duration_ms: 2.096328
+  type: 'test'
+  ...
+# Subtest: parseSkillRef supports skills.sh URLs
+ok 8 - parseSkillRef supports skills.sh URLs
+  ---
+  duration_ms: 0.502411
+  type: 'test'
+  ...
+# Subtest: parseSkillRef supports owner/repo@Skill Name
+ok 9 - parseSkillRef supports owner/repo@Skill Name
+  ---
+  duration_ms: 0.427884
+  type: 'test'
+  ...
+# Subtest: parseSkillRef rejects repo-only refs
+ok 10 - parseSkillRef rejects repo-only refs
+  ---
+  duration_ms: 0.645529
+  type: 'test'
+  ...
+# Subtest: normalizeApiSkillId handles search ids and source fallback
+ok 11 - normalizeApiSkillId handles search ids and source fallback
+  ---
+  duration_ms: 0.271356
+  type: 'test'
+  ...
+# Subtest: server initialize negotiates protocol version
+ok 12 - server initialize negotiates protocol version
+  ---
+  duration_ms: 1.456078
+  type: 'test'
+  ...
+# Subtest: server lists tools and dispatches tool calls
+ok 13 - server lists tools and dispatches tool calls
+  ---
+  duration_ms: 1.166433
+  type: 'test'
+  ...
+# Subtest: server returns method-not-found for unknown tools
+ok 14 - server returns method-not-found for unknown tools
+  ---
+  duration_ms: 0.254657
+  type: 'test'
+  ...
+# Subtest: search_skills ranks candidates and exposes selection metadata
+ok 15 - search_skills ranks candidates and exposes selection metadata
+  ---
+  duration_ms: 116.217798
+  type: 'test'
+  ...
+# Subtest: load_skill by query auto-loads only high confidence matches and then reuses cache
+ok 16 - load_skill by query auto-loads only high confidence matches and then reuses cache
+  ---
+  duration_ms: 16.17657
+  type: 'test'
+  ...
+# Subtest: load_skill returns candidates instead of auto-selecting ambiguous queries
+ok 17 - load_skill returns candidates instead of auto-selecting ambiguous queries
+  ---
+  duration_ms: 4.835312
+  type: 'test'
+  ...
+1..17
+# tests 17
+# suites 0
+# pass 17
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 614.397432

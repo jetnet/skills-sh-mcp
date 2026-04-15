@@ -1,0 +1,26 @@
+{
+  "mcpProxy": {
+    "baseURL": "http://127.0.0.1",
+    "addr": ":9090",
+    "name": "skills-sh lazy proxy",
+    "version": "0.1.0",
+    "type": "stdio",
+    "hierarchyPath": "./mcp_hierarchy",
+    "options": {
+      "lazyLoad": true
+    }
+  },
+  "mcpServers": {
+    "skills-sh": {
+      "transportType": "stdio",
+      "command": "skills-sh-mcp",
+      "args": [],
+      "env": {
+        "SKILLS_SH_CACHE_DIR": "${HOME}/.cache/skills-sh-mcp"
+      },
+      "options": {
+        "lazyLoad": true
+      }
+    }
+  }
+}
