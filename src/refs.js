@@ -1,12 +1,36 @@
 import { slugifySkillName } from './util.js';
 
+const SAFE_SEGMENT_PATTERN = /^[A-Za-z0-9._-]+$/;
+
+function validateRefSegment(value, label) {
+  const segment = String(value ?? '').trim();
+  if (!segment) {
+    throw new Error(`Invalid ${label}: must be a non-empty path segment.`);
+  }
+  if (segment === '.' || segment === '..') {
+    throw new Error(`Invalid ${label}: path traversal segments are not allowed.`);
+  }
+  if (segment.includes('/') || segment.includes('\\')) {
+    throw new Error(`Invalid ${label}: slashes are not allowed.`);
+  }
+  if (!SAFE_SEGMENT_PATTERN.test(segment)) {
+    throw new Error(
+      `Invalid ${label}: only letters, numbers, dots, underscores, and dashes are allowed.`
+    );
+  }
+  return segment;
+}
+
 function buildRef(owner, repo, slug) {
-  const id = `${owner}/${repo}/${slug}`;
+  const safeOwner = validateRefSegment(owner, 'owner');
+  const safeRepo = validateRefSegment(repo, 'repo');
+  const safeSlug = validateRefSegment(slug, 'slug');
+  const id = `${safeOwner}/${safeRepo}/${safeSlug}`;
   return {
-    owner,
-    repo,
-    slug,
-    source: `${owner}/${repo}`,
+    owner: safeOwner,
+    repo: safeRepo,
+    slug: safeSlug,
+    source: `${safeOwner}/${safeRepo}`,
     id,
     url: `https://skills.sh/${id}`,
   };

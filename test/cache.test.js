@@ -71,3 +71,64 @@ test('search cache respects ttl', async () => {
   await new Promise((resolve) => setTimeout(resolve, 80));
   assert.equal(await cache.getSearch('react', 5), null);
 });
+
+test('cache enforces configured package size limits', async () => {
+  const tempDirFiles = await makeTempDir();
+  const filesLimited = new CacheManager({
+    rootDir: tempDirFiles,
+    searchTtlMs: 60_000,
+    maxFiles: 1,
+  });
+  await filesLimited.init();
+
+  await assert.rejects(
+    () =>
+      filesLimited.putSkill('acme/skills/test-skill', {
+        hash: 'hash-123',
+        files: [
+          { path: 'SKILL.md', contents: 'short' },
+          { path: 'extra.md', contents: 'short' },
+        ],
+      }),
+    /too many files/i
+  );
+
+  const tempDirFileBytes = await makeTempDir();
+  const fileBytesLimited = new CacheManager({
+    rootDir: tempDirFileBytes,
+    searchTtlMs: 60_000,
+    maxFileBytes: 10,
+  });
+  await fileBytesLimited.init();
+
+  await assert.rejects(
+    () =>
+      fileBytesLimited.putSkill('acme/skills/test-skill', {
+        hash: 'hash-123',
+        files: [{ path: 'SKILL.md', contents: 'this file is too large' }],
+      }),
+    /file too large/i
+  );
+
+  const tempDirTotal = await makeTempDir();
+  const totalBytesLimited = new CacheManager({
+    rootDir: tempDirTotal,
+    searchTtlMs: 60_000,
+    maxFiles: 10,
+    maxFileBytes: 100,
+    maxTotalBytes: 15,
+  });
+  await totalBytesLimited.init();
+
+  await assert.rejects(
+    () =>
+      totalBytesLimited.putSkill('acme/skills/test-skill', {
+        hash: 'hash-123',
+        files: [
+          { path: 'SKILL.md', contents: '1234567890' },
+          { path: 'a.md', contents: '1234567890' },
+        ],
+      }),
+    /total size limit/i
+  );
+});

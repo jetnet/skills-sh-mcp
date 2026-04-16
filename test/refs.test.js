@@ -29,6 +29,13 @@ test('parseSkillRef rejects repo-only refs', () => {
   assert.throws(() => parseSkillRef('vercel-labs/skills'), /ambiguous/i);
 });
 
+test('parseSkillRef rejects unsafe path traversal segments', () => {
+  assert.throws(
+    () => parseSkillRef('..\\..\\evil/skills/find-skills'),
+    /invalid|unsafe/i
+  );
+});
+
 test('normalizeApiSkillId handles search ids and source fallback', () => {
   const direct = normalizeApiSkillId('vercel-labs/skills/find-skills', 'vercel-labs/skills');
   assert.equal(direct.id, 'vercel-labs/skills/find-skills');

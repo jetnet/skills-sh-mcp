@@ -13,14 +13,36 @@ import {
 import { extractSkillMetadata } from './frontmatter.js';
 import { parseSkillRef } from './refs.js';
 
+const DEFAULT_MAX_FILES = 200;
+const DEFAULT_MAX_FILE_BYTES = 512 * 1024;
+const DEFAULT_MAX_TOTAL_BYTES = 5 * 1024 * 1024;
+
 function encodeSkillDirName(ref) {
   return `${ref.owner}__${ref.repo}__${ref.slug}`;
 }
 
+function normalizePositiveInt(value, fallback) {
+  const number = Number(value);
+  if (!Number.isFinite(number) || number < 1) return fallback;
+  return Math.floor(number);
+}
+
+function ensurePathWithin(basePath, targetPath) {
+  const base = path.resolve(basePath);
+  const target = path.resolve(targetPath);
+  if (target === base || target.startsWith(`${base}${path.sep}`)) {
+    return target;
+  }
+  throw new Error(`Unsafe cache path resolved outside cache root: ${targetPath}`);
+}
+
 export class CacheManager {
   constructor(options = {}) {
-    this.rootDir = options.rootDir;
-    this.searchTtlMs = options.searchTtlMs;
+    this.rootDir = path.resolve(String(options.rootDir));
+    this.searchTtlMs = normalizePositiveInt(options.searchTtlMs, 15 * 60 * 1000);
+    this.maxFiles = normalizePositiveInt(options.maxFiles, DEFAULT_MAX_FILES);
+    this.maxFileBytes = normalizePositiveInt(options.maxFileBytes, DEFAULT_MAX_FILE_BYTES);
+    this.maxTotalBytes = normalizePositiveInt(options.maxTotalBytes, DEFAULT_MAX_TOTAL_BYTES);
     this.searchDir = path.join(this.rootDir, 'search');
     this.skillsDir = path.join(this.rootDir, 'skills');
   }
@@ -62,7 +84,8 @@ export class CacheManager {
 
   skillDir(refOrString) {
     const ref = typeof refOrString === 'string' ? parseSkillRef(refOrString) : refOrString;
-    return path.join(this.skillsDir, encodeSkillDirName(ref));
+    const unsafePath = path.join(this.skillsDir, encodeSkillDirName(ref));
+    return ensurePathWithin(this.skillsDir, unsafePath);
   }
 
   manifestPath(refOrString) {
@@ -87,6 +110,26 @@ export class CacheManager {
           contents: String(file.contents ?? ''),
         }))
       : [];
+
+    if (normalizedFiles.length > this.maxFiles) {
+      throw new Error(`Skill package has too many files (${normalizedFiles.length}). Limit is ${this.maxFiles}.`);
+    }
+
+    let totalBytes = 0;
+    for (const file of normalizedFiles) {
+      const fileBytes = Buffer.byteLength(file.contents, 'utf8');
+      if (fileBytes > this.maxFileBytes) {
+        throw new Error(
+          `Skill file too large (${file.path}: ${fileBytes} bytes). Limit is ${this.maxFileBytes} bytes.`
+        );
+      }
+      totalBytes += fileBytes;
+      if (totalBytes > this.maxTotalBytes) {
+        throw new Error(
+          `Skill package exceeded total size limit (${totalBytes} bytes). Limit is ${this.maxTotalBytes} bytes.`
+        );
+      }
+    }
 
     await removeDir(dir);
     await ensureDir(filesRoot);

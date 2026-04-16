@@ -7,6 +7,23 @@ function createTestServer() {
     handlers: {
       echo_tool: async (args) => ({ args }),
     },
+    toolDefinitions: [
+      {
+        name: 'echo_tool',
+        description: 'Echo test tool',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            message: {
+              type: 'string',
+              minLength: 2,
+            },
+          },
+          required: ['message'],
+          additionalProperties: false,
+        },
+      },
+    ],
     serverInfo: {
       name: 'skills-sh-mcp',
       title: 'skills.sh MCP Server',
@@ -42,7 +59,8 @@ test('server lists tools and dispatches tool calls', async () => {
     params: {},
   });
   assert.equal(Array.isArray(toolsResponse.result.tools), true);
-  assert.ok(toolsResponse.result.tools.length >= 4);
+  assert.equal(toolsResponse.result.tools.length, 1);
+  assert.equal(toolsResponse.result.tools[0].name, 'echo_tool');
 
   const callResponse = await server.handleMessage({
     jsonrpc: '2.0',
@@ -50,12 +68,28 @@ test('server lists tools and dispatches tool calls', async () => {
     method: 'tools/call',
     params: {
       name: 'echo_tool',
-      arguments: { hello: 'world' },
+      arguments: { message: 'world' },
     },
   });
 
   assert.equal(callResponse.result.isError, false);
-  assert.deepEqual(callResponse.result.structuredContent, { args: { hello: 'world' } });
+  assert.deepEqual(callResponse.result.structuredContent, { args: { message: 'world' } });
+});
+
+test('server rejects tool calls with schema-invalid arguments', async () => {
+  const server = createTestServer();
+  const response = await server.handleMessage({
+    jsonrpc: '2.0',
+    id: 5,
+    method: 'tools/call',
+    params: {
+      name: 'echo_tool',
+      arguments: { message: 'ok', extra: true },
+    },
+  });
+
+  assert.equal(response.result.isError, true);
+  assert.match(response.result.structuredContent.error, /Invalid arguments/i);
 });
 
 test('server returns method-not-found for unknown tools', async () => {
