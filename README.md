@@ -66,14 +66,7 @@ List cached skill packages and metadata.
 
 No build step is required. This package is plain Node.js and runs as-is.
 
-### Option A: install globally from npm (recommended)
-
-```bash
-npm install -g skills-sh-mcp
-skills-sh-mcp
-```
-
-### Option B: install globally from a local checkout
+### Option A: install globally from a local checkout (recommended)
 
 ```bash
 npm ci
@@ -81,10 +74,21 @@ npm install -g .
 skills-sh-mcp
 ```
 
-### Option C: run via `npx` (no global install)
+### Option B: install from a local tarball
 
 ```bash
-npx skills-sh-mcp
+npm ci
+npm pack
+npm install -g ./skills-sh-mcp-<version>.tgz
+skills-sh-mcp
+```
+
+### Option C: install/run from a registry (only if published)
+
+```bash
+npm install -g skills-sh-mcp
+# or
+npx -y skills-sh-mcp
 ```
 
 ## MCP client configuration
@@ -107,12 +111,30 @@ Example stdio config (when `skills-sh-mcp` is available in `PATH`):
 
 Alternative config using `npx`:
 
+Use this only if the package is available from your configured npm registry.
+
 ```json
 {
   "mcpServers": {
     "skills-sh": {
       "command": "npx",
       "args": ["-y", "skills-sh-mcp"]
+    }
+  }
+}
+```
+
+Alternative config without global install (run directly from a local checkout):
+
+```json
+{
+  "mcpServers": {
+    "skills-sh": {
+      "command": "node",
+      "args": ["/absolute/path/to/skills-sh-mcp/src/cli.js"],
+      "env": {
+        "SKILLS_SH_CACHE_DIR": "/absolute/path/to/.cache/skills-sh-mcp"
+      }
     }
   }
 }

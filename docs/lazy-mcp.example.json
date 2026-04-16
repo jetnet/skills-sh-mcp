@@ -5,17 +5,17 @@
     "host": "localhost",
     "path": "/mcp"
   },
- "logging": {
+  "logging": {
     "format": "plain"
   },
   "servers": [
     {
       "name": "skills-sh",
-        "description": "Find online skills from skill.sh",
-        "command": ["skills-sh-mcp"],
-        "env": {
-          "SKILLS_SH_CACHE_DIR": "${HOME}/.cache/skills-sh-mcp"
-        }
-     }
+      "description": "Find online skills from skills.sh",
+      "command": ["node", "/absolute/path/to/skills-sh-mcp/src/cli.js"],
+      "env": {
+        "SKILLS_SH_CACHE_DIR": "${HOME}/.cache/skills-sh-mcp"
+      }
+    }
   ]
 }
