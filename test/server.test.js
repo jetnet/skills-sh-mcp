@@ -106,3 +106,42 @@ test('server returns method-not-found for unknown tools', async () => {
 
   assert.equal(response.error.code, -32601);
 });
+
+test('server includes a lazy-mcp hint when search_skills query is missing', async () => {
+  const server = createServer({
+    handlers: {
+      search_skills: async () => ({ ok: true }),
+    },
+    toolDefinitions: [
+      {
+        name: 'search_skills',
+        description: 'Search test tool',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            query: {
+              type: 'string',
+              minLength: 2,
+            },
+          },
+          required: ['query'],
+          additionalProperties: false,
+        },
+      },
+    ],
+  });
+
+  const response = await server.handleMessage({
+    jsonrpc: '2.0',
+    id: 6,
+    method: 'tools/call',
+    params: {
+      name: 'search_skills',
+      arguments: {},
+    },
+  });
+
+  assert.equal(response.result.isError, true);
+  assert.match(response.result.structuredContent.error, /missing required property "query"/i);
+  assert.match(response.result.structuredContent.error, /parameters\.query/i);
+});

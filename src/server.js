@@ -121,6 +121,22 @@ function validateToolArguments(schema, args) {
   return errors;
 }
 
+function hasMissingRequiredProperty(validationErrors, propertyName) {
+  const expected = `missing required property "${propertyName}"`;
+  return validationErrors.some((item) => item === expected);
+}
+
+function validationHintForTool(toolName, validationErrors) {
+  if (toolName === 'search_skills' && hasMissingRequiredProperty(validationErrors, 'query')) {
+    return (
+      'Hint: search_skills expects a top-level "query" argument. ' +
+      'When called via lazy-mcp invoke_command, pass it as parameters.query.'
+    );
+  }
+
+  return '';
+}
+
 export function createServer(options) {
   const handlers = options.handlers;
   const toolDefinitions = Array.isArray(options.toolDefinitions)
@@ -202,11 +218,17 @@ export function createServer(options) {
       if (schema) {
         const validationErrors = validateToolArguments(schema, args);
         if (validationErrors.length > 0) {
+          const hint = validationHintForTool(toolName, validationErrors);
+          const errorMessage =
+            hint.length > 0
+              ? `Invalid arguments for ${toolName}: ${validationErrors.join('; ')}. ${hint}`
+              : `Invalid arguments for ${toolName}: ${validationErrors.join('; ')}`;
+
           return jsonRpcResponse(
             id,
             encodeToolResult(
               {
-                error: `Invalid arguments for ${toolName}: ${validationErrors.join('; ')}`,
+                error: errorMessage,
               },
               true
             )

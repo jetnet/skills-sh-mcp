@@ -1,10 +1,10 @@
 {
   "name": "skills-sh-mcp",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Minimal MCP server for dynamically searching, loading, and caching skills from skills.sh",
   "type": "module",
   "bin": {
-    "skills-sh-mcp": "./bin/skills-sh-mcp.js"
+    "skills-sh-mcp": "bin/skills-sh-mcp.js"
   },
   "files": [
     "bin",
@@ -28,5 +28,19 @@
   "engines": {
     "node": ">=18"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jetnet/skills-sh-mcp.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/jetnet/skills-sh-mcp/issues"
+  },
+  "homepage": "https://github.com/jetnet/skills-sh-mcp#readme"
 }
