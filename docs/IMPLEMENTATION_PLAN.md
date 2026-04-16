@@ -247,3 +247,5 @@ Returns manifest summaries of locally cached skills.
 - optional cache invalidation tool
 - optional resource exposure for cached files
 - optional structured trust policy profiles
+- managed trusted-owner registry (versioned config and/or centrally managed source)
+- optional owner trust tiers (`trusted`, `review_required`, `blocked`) with policy-driven auto-selection

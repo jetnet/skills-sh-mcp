@@ -132,6 +132,12 @@ See:
 - `SKILLS_SH_TRUSTED_OWNERS` - comma-separated owner list, default `vercel-labs,anthropics,microsoft`
 - `SKILLS_SH_MCP_DEBUG=1` - enable stderr debug logging
 
+## Planned enhancements
+
+- Add a managed trusted-owner policy source (for example a versioned config file or centrally managed config) instead of relying only on static defaults.
+- Support owner trust tiers (`trusted`, `review_required`, `blocked`) to make auto-selection policy explicit and auditable.
+- Add an optional strict mode where query-based auto-selection is allowed only for trusted owners.
+
 ## Cache layout
 
 By default the cache lives under:
