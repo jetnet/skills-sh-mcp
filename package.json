@@ -4,10 +4,9 @@
   "description": "Minimal MCP server for dynamically searching, loading, and caching skills from skills.sh",
   "type": "module",
   "bin": {
-    "skills-sh-mcp": "bin/skills-sh-mcp.js"
+    "skills-sh-mcp": "src/cli.js"
   },
   "files": [
-    "bin",
     "src",
     "docs",
     "README.md",
@@ -15,7 +14,7 @@
   ],
   "scripts": {
     "test": "node --test",
-    "smoke": "node ./bin/skills-sh-mcp.js"
+    "smoke": "node ./src/cli.js"
   },
   "keywords": [
     "mcp",

@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "skills-sh": {
-      "command": "node",
-      "args": ["/absolute/path/to/skills-sh-mcp/bin/skills-sh-mcp.js"],
+      "command": "skills-sh-mcp",
+      "args": [],
       "env": {
         "SKILLS_SH_CACHE_DIR": "${HOME}/.cache/skills-sh-mcp"
       }

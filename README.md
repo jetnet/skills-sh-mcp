@@ -64,20 +64,24 @@ List cached skill packages and metadata.
 
 ## Installation
 
-### Option A: run directly from the source tree
+No build step is required. This package is plain Node.js and runs as-is.
+
+### Option A: install globally from npm (recommended)
 
 ```bash
-node ./bin/skills-sh-mcp.js
-```
-
-### Option B: install from the packed tarball
-
-```bash
-npm install -g ./skills-sh-mcp-0.1.0.tgz
+npm install -g skills-sh-mcp
 skills-sh-mcp
 ```
 
-### Option C: use via `npx` after publishing internally
+### Option B: install globally from a local checkout
+
+```bash
+npm ci
+npm install -g .
+skills-sh-mcp
+```
+
+### Option C: run via `npx` (no global install)
 
 ```bash
 npx skills-sh-mcp
@@ -85,14 +89,14 @@ npx skills-sh-mcp
 
 ## MCP client configuration
 
-Example stdio config:
+Example stdio config (when `skills-sh-mcp` is available in `PATH`):
 
 ```json
 {
   "mcpServers": {
     "skills-sh": {
-      "command": "node",
-      "args": ["/absolute/path/to/skills-sh-mcp/bin/skills-sh-mcp.js"],
+      "command": "skills-sh-mcp",
+      "args": [],
       "env": {
         "SKILLS_SH_CACHE_DIR": "/absolute/path/to/.cache/skills-sh-mcp"
       }
@@ -101,14 +105,14 @@ Example stdio config:
 }
 ```
 
-If you install the tarball globally, you can use:
+Alternative config using `npx`:
 
 ```json
 {
   "mcpServers": {
     "skills-sh": {
-      "command": "skills-sh-mcp",
-      "args": []
+      "command": "npx",
+      "args": ["-y", "skills-sh-mcp"]
     }
   }
 }
@@ -167,7 +171,7 @@ npm test
 Run the server manually:
 
 ```bash
-node ./bin/skills-sh-mcp.js
+npm run smoke
 ```
 
 ## Project docs
